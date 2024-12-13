@@ -1,0 +1,21 @@
+{
+  "name": "contacts-web-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "buildfrontend": "rmdir /s /q dist && cd ..\\contacts-frontend && npm run build && xcopy dist ..\\contacts-backend\\dist /E /H /C /I",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
