@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const Contact = require("./models/contact")
 app.use(cors());
 
 app.use(express.json());
@@ -19,14 +20,9 @@ app.use(requestLogger)
 
 const port = 3001
 
-let contacts = [
-    { id: 1, name: "John Doe", email: "john@example.com"},
-    { id: 2, name: "Jane Smith", email: "jane@example.com"},
-    { id: 3, name: "Bob Johnson", email: "bob@example.com"},
-];
-
-app.get("/api/contacts", (req, res) => {
-    res.json(contacts);
+app.get("/api/contacts", async (req, res) => {
+    const contacts = await Contact.find({});
+    res.json(contacts)
 })
 
 app.get("/api/info", (req, res) => {
@@ -34,19 +30,16 @@ app.get("/api/info", (req, res) => {
     <p>Number of contacts: ${contacts.length}</p>`)
 })
 
-app.get("/api/contacts/:id", (req, res) => {
-    const contact = contacts.find(c => c.id == req.params.id);
+app.get("/api/contacts/:id", async (req, res) => {
+    const contact = await Contact.findById(req.params.id);
     if(!contact){
-        res.status(404).json({error: "Contact not found"});
-    }
-    else{
-        res.json(contact);
-
+        res.status(404).json({message: "Contact not found!"});
+    } else {
+        res.json(contact)
     }
 })
 
-app.delete("/api/contacts/:id", (req, res) => {
-    // res.send(req.params.id);
+app.delete("/api/contacts/:id", async (req, res) => {
     const contact = contacts.find(m => m.id===Number(req.params.id));
     
     if(!contact){
@@ -57,32 +50,24 @@ app.delete("/api/contacts/:id", (req, res) => {
     }
 })
 
-app.post("/api/contacts", (req, res) => {
+app.post("/api/contacts", async (req, res) => {
     const {name, email} = req.body;
-    const contactsEmails = contacts.find((m) => m.email === (email))
-    console.log(contactsEmails)
-    if(!name){
-        res.status(400).json({error: "Must provide a name"})
-        return;
+    const contactFind = await Contact.find({email: { $eq: email}});
+    if(contactFind.length !== 0){
+        return res.status(409).status({error: "Email already exists"});
+    }
+    else if(!name){
+        return res.status(400).json({error: "Name is required"});
     }
     else if(!email){
-        res.status(400).json({error: "Must provide an email"})
-        return;
+        return res.status(400).json({error: "Must provide an email"});
+        
     }
     else{
-        if(contactsEmails){
-            return res.status(409).json({error: "Email already exists in contact list"})
-        }
-        const contact = {
-            id: `${Date.now()}${Math.floor(Math.random() * 10000)}`,
-            name,
-            email,
-        };
-        contacts.push(contact);
-        return res.status(201).json(contact)
-
+        const contactItem= new Contact({name, email});
+        const savedContactItem = await contactItem.save();
+        res.json(savedContactItem);
     }
-    
 })
 
 
