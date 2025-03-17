@@ -1,0 +1,30 @@
+.notification {
+  position: relative;
+  padding: 5px;
+  margin: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 5px;
+  color: white;
+}
+
+.warning {
+  background-color: #f5a623;
+}
+
+.info {
+  background-color: #4caf50;
+}
+
+.breaks {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 20px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.breaks h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
